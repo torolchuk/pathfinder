@@ -9,8 +9,6 @@ jobs:
     name: GH Pages deploy
     runs-on: ubuntu-latest
     steps:
-      env: 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1  
 
@@ -21,6 +19,12 @@ jobs:
         run: |
           npm i
       
-      - name: Build and deploy
-        run: |
-          npm run deploy
+      - name: Build application
+        run:
+          npm run build
+
+      - name: Deploy to pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
