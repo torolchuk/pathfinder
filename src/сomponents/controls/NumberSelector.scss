@@ -1,0 +1,24 @@
+.number-selector {
+    &__container {
+        display: flex;
+        align-items: center;
+        margin: 0 -.75rem;
+    }
+
+    &__control {
+        margin: 0 .75rem;
+        color: #4a4a4a;
+        cursor: pointer;
+        font-size: 1.3rem;
+    }
+
+    &__display {
+        font-size: .9rem;
+        width: 3rem;
+        border: 1px solid #ccc;
+        font-style: italic;
+        text-align: center;
+        padding: .2rem 0;
+        border-radius: .2rem;
+    }
+}

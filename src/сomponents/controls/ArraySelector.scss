@@ -1,0 +1,30 @@
+.array-selector {
+    &__container {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: .2rem;
+        overflow: hidden;
+    }
+
+    &__item {
+        flex-shrink: 0;
+        padding: .2rem .5rem;
+        border-right: 1px solid #ccc;
+        font-weight: 400;
+        font-size: .9rem;
+        cursor: pointer;
+        color: #4a4a4a;
+
+        &:hover {
+            background: rgba(0,0,0,.05);
+        }
+
+        &:last-of-type {
+            border-right: none;
+        }
+
+        &__selected, &__selected:hover {
+            background: rgba(0, 0, 0, .1);
+        }
+    }
+}

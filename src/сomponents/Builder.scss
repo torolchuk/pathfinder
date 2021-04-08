@@ -1,0 +1,51 @@
+$padding: 20px;
+
+.builder {
+    &__wrap {
+        display: flex;
+        margin: 0 #{-$padding};
+    }
+
+    &__left-side {
+        padding: 0 $padding;
+        width: 600px;
+        position: relative;
+
+        &:before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: -$padding;
+            right: 0;
+            bottom: -$padding;
+            left: 0;
+            background: #fff;
+            box-shadow: 0 32px 128px 0 rgba(0,0,0,.2), 0 4px 16px 0 rgba(0,0,0,.1);
+            border-radius: .2rem;
+        }
+    }
+    
+    &__right-side {
+        flex: 1;
+        padding: #{$padding / 2} $padding;
+        position: relative;
+
+        &:before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: #fff;
+            box-shadow: 0 16px 64px 0 rgba(0,0,0,.1), 0 2px 8px 0 rgba(0,0,0,.05);
+            z-index: -1;
+            border-radius: .2rem;
+        }
+    }
+
+    &__content {
+        position: relative;
+    }
+}

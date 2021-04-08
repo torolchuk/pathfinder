@@ -1,0 +1,14 @@
+.control-wrap {
+    &__container {
+        display: flex;
+        align-items: center;
+    }
+
+    &__name {
+        color: #4a4a4a;
+    }
+
+    &__proxy-box {
+        margin-left: auto;
+    }
+}
