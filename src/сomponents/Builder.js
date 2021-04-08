@@ -104,7 +104,6 @@ export function Builder() {
                     <br />
                     <ControlWrap name="Calculate Way">
                         <button onClick={calcWay}>Run</button>
-                        <button onClick={calcWay}>Do nothing</button>
                     </ControlWrap>
                 </BuilderControls>
             </div>
