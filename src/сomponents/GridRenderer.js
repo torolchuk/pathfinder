@@ -1,6 +1,6 @@
 import React from 'react';
 import { ALL_BLOCK_TYPES } from '../helpers/map';
-import { createVector, isVectorsEqual } from '../helpers/vectors';
+import { createVector } from '../helpers/vectors';
 
 import './GridRenderer.scss';
 

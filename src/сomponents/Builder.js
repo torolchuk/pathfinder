@@ -49,6 +49,8 @@ export function Builder() {
 
                 setMap(map);
                 break;
+            default:
+                break;
         }
 
         setMap([...map]);
