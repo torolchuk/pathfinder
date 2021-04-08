@@ -1,0 +1,21 @@
+name: deploy-gh-pages
+on: 
+  push:
+    branches:
+      - main
+      - dev
+jobs:
+  deployment:
+    name: GH Pages deploy
+    runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1  
+
+      - name: Install Dependencies
+        run: |
+          npm i
+      
+      - name: Build and deploy
+        run: |
+          npm run deploy
