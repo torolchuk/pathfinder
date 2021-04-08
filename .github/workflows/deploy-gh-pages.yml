@@ -20,7 +20,7 @@ jobs:
           npm i
       
       - name: Build and deploy
-        with: 
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run deploy
