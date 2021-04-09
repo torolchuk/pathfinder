@@ -30,6 +30,11 @@ export function Builder() {
         const newMap = resizeMapToSize(map, newSize);
         
         setWorldSize(newSize);
+        updateMap(newMap);
+    }
+    
+    function updateMap(newMap) {
+        calcWay(newMap);
         setMap(newMap);
     }
 
@@ -47,18 +52,18 @@ export function Builder() {
                 if (!!existedBlockPos) setValueOnMap(map, existedBlockPos, EMPTY_BLOCK_ID);
                 setValueOnMap(map, position, blockType);
 
-                setMap(map);
+                updateMap(map);
                 break;
             default:
                 break;
         }
 
-        setMap([...map]);
+        updateMap([...map]);
     }
 
     function clearMap() {
         const newMap = createMapOfSize(worldSize);
-        setMap(newMap);
+        updateMap(newMap);
     }
 
     function saveMapToStorage() {
@@ -68,7 +73,7 @@ export function Builder() {
     function loadMapFromStorage() {
         const storedMap = localStorage.getItem(LOCALSTORAGE_MAP_ID);
         if (!storedMap) return;
-        setMap(JSON.parse(storedMap));
+        updateMap(JSON.parse(storedMap));
     }
 
     function calcWay() {
@@ -104,8 +109,8 @@ export function Builder() {
                         <button onClick={loadMapFromStorage}>Load</button>
                     </ControlWrap>
                     <br />
-                    <ControlWrap name="Calculate Way">
-                        <button onClick={calcWay}>Run</button>
+                    <ControlWrap name="Path length:">
+                        <span>{Array.isArray(path) ? path.length : 'null'}</span>
                     </ControlWrap>
                 </BuilderControls>
             </div>
