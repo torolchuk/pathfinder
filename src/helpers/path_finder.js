@@ -6,7 +6,7 @@ import { absVector, createVector, isVectorsEqual, subsractVectors, summVectors, 
 const MAX_PATHFINDER_DEPTH = 10000;
 
 const STANDART_PRICE = 10;
-const DIAGONAL_PRICE = 10;
+const DIAGONAL_PRICE = 14;
 const DIRECTION_PRICE = {
     [DIR_UP]: STANDART_PRICE,
     [DIR_RIGHT]: STANDART_PRICE,
@@ -34,16 +34,23 @@ function isLegitPointOnModel(model, position) {
     return (!model[y][x] || !model[y][x].closed);
 }
 
+function calcMinimalWayCoast(a, b) {
+    const delta = absVector(subsractVectors(a, b));
+    const min = Math.min(delta.x, delta.y);
+    const max = Math.max(delta.x, delta.y);
+
+    return (min * DIAGONAL_PRICE) + ((max - min) * STANDART_PRICE);
+}
+
 function getCellInfoOnModel(model, position, finish, spendedCost, parent) {
-    const vectorLength = absVector(subsractVectors(position, finish));
-    const length = vectorLength.x + vectorLength.y;
-    const fullCost = length + spendedCost;
+    const remainingCost = calcMinimalWayCoast(position, finish);
+    const fullCost = remainingCost + spendedCost;
 
     const oldCell = model[position.y][position.x];
-    const prevFullCost = !!oldCell ? oldCell.Cost + oldCell.spendedCost : null;
+    const prevFullCost = !!oldCell ? oldCell.remainingCost + oldCell.spendedCost : null;
 
     return (!prevFullCost || prevFullCost > fullCost)
-        ? { remainingCost: length, spendedCost, parent, closed: false }
+        ? { remainingCost, spendedCost, parent, closed: false }
         : oldCell;
 }
 
@@ -57,17 +64,20 @@ function getInitPathfinderModel(map, start, finish) {
 
 function findCheapestPointOnModel(model) {
     let cheapestCost = null;
+    let cheapestRemainingCost = null;
     let cheapestPos = null;
     
     model.forEach((row, y) => {
         row.forEach((cell, x) => {
             if (!cell || !!cell.closed) return;
             
-            const cellCoast = cell.spendedCost + cell.remainingCost;
-            if (!!cheapestCost && cheapestCost <= cellCoast) return;
-            
-            cheapestCost = cellCoast;
-            cheapestPos = createVector(x, y);
+            const cellCost = cell.spendedCost + cell.remainingCost;
+            if (!cheapestPos || cheapestCost > cellCost ||
+                (cheapestCost === cellCost && cheapestRemainingCost > cell.remainingCost)) {
+                cheapestCost = cellCost;
+                cheapestRemainingCost = cell.remainingCost;
+                cheapestPos = createVector(x, y);   
+            }
         });
     });
 
@@ -102,32 +112,31 @@ function pathfinderIteration(map, start, finish, model, spendedWay) {
         const newPoint = summVectors(start, MOVING_DIRECTIONS[dir]);
         if (isLegitPointOnMap(map, newPoint) && isLegitPointOnModel(model, newPoint)) {
             const cellInfo = getCellInfoOnModel(model, newPoint, finish, spendedWay + price, start);
-            if (cellInfo !== model[newPoint.y][newPoint.x]) model[newPoint.y][newPoint.x] = cellInfo;
-
-            if (cellInfo.remainingCost === 0) return model;
+            
+            if (cellInfo !== model[newPoint.y][newPoint.x]) { 
+                model[newPoint.y][newPoint.x] = cellInfo;
+            }
+            
+            if (cellInfo.remainingCost === 0) {
+                return model;
+            }
         }
     }
 
     const nextSearch = findCheapestPointOnModel(model);
+    const newSpendedCost = model[nextSearch.y][nextSearch.x].spendedCost;
 
     if (!nextSearch) return model;
 
-    return pathfinderIteration(map, nextSearch, finish, model, spendedWay + 1);
+    return pathfinderIteration(map, nextSearch, finish, model, newSpendedCost);
 }
 
 export function findPathOnMap(map) {
     const startPos = findPositionOfBlockTypeOnMap(map, START_BLOCK_ID);
     const finishPos = findPositionOfBlockTypeOnMap(map, FINISH_BLOCK_ID);
-
     if (!startPos || !finishPos) return Error('Map should have Start and Finish');
 
-    const model = getInitPathfinderModel(map, startPos, finishPos);
-
-    const finishedModel = pathfinderIteration(map, startPos, finishPos, model, 0);
-
-    console.log(finishedModel);
-
-    const finalWay = extractWayFromModel(finishedModel, startPos, finishPos);
-
-    return finalWay;
+    const initialModel = getInitPathfinderModel(map, startPos, finishPos);
+    const finishedModel = pathfinderIteration(map, startPos, finishPos, initialModel, 0);
+    return extractWayFromModel(finishedModel, startPos, finishPos);
 }

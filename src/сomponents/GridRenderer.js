@@ -26,8 +26,8 @@ export function GridRenderer(props) {
                                 const blockTypeClass = !!el ? 'grid-renderer__cell__' + blockTypeCollection[el].toLowerCase() : '';
                                 return (<div className={`grid-renderer__cell ${isPathClass} ${blockTypeClass}`}
                                      key={`cell_${xIndex}:${yIndex}`}
-                                     onClick={_ => handleCellClick(xIndex, yIndex)}></div>)
-                                }
+                                     onClick={_ => handleCellClick(xIndex, yIndex)}>
+                                </div>)}
                             )}
                         </div>
                     )
