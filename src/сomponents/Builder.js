@@ -24,7 +24,7 @@ export function Builder() {
     const [map, setMap] = useState(createMapOfSize(worldSize));
     const [blockType, setBlockType] = useState(WALL_BLOCK_ID);
     const [path, setPath] = useState(null);
-
+    
     function handleWorldSizeChange(iteration) {
         const newSize = worldSize + iteration;
         const newMap = resizeMapToSize(map, newSize);
@@ -34,8 +34,8 @@ export function Builder() {
     }
     
     function updateMap(newMap) {
-        calcWay(newMap);
         setMap(newMap);
+        calcWay(newMap);
     }
 
     function handleCellClick(position) {
@@ -71,15 +71,17 @@ export function Builder() {
     }
 
     function loadMapFromStorage() {
-        const storedMap = localStorage.getItem(LOCALSTORAGE_MAP_ID);
+        const storedMapJSON = localStorage.getItem(LOCALSTORAGE_MAP_ID);
+        const storedMap = JSON.parse(storedMapJSON);
         if (!storedMap) return;
-        updateMap(JSON.parse(storedMap));
+        updateMap(storedMap);
+        setWorldSize(storedMap.length);
     }
 
-    function calcWay() {
+    function calcWay(map) {
         try {
-            const wayModel = findPathOnMap(map);
-            setPath(wayModel);
+            const findedPath = findPathOnMap(map);
+            setPath(findedPath);
         } catch (err) {
             console.error(err);
         }
@@ -109,9 +111,12 @@ export function Builder() {
                         <button onClick={loadMapFromStorage}>Load</button>
                     </ControlWrap>
                     <br />
-                    <ControlWrap name="Path length:">
-                        <span>{Array.isArray(path) ? path.length : 'null'}</span>
-                    </ControlWrap>
+                    {
+                        Array.isArray(path) && path.length &&
+                        <ControlWrap name="Path length">
+                            <span>{path.length}</span>
+                        </ControlWrap>
+                    }
                 </BuilderControls>
             </div>
         </div>
