@@ -1,7 +1,22 @@
 import { findPositionOfBlockTypeOnMap, FINISH_BLOCK_ID, START_BLOCK_ID, WALL_BLOCK_ID } from "./map";
-import { absVector, createVector, isVectorsEqual, MOVING_DIRECTIONS, subsractVectors, summVectors, cloneVector } from "./vectors";
+import { absVector, createVector, isVectorsEqual, subsractVectors, summVectors, cloneVector, 
+    MOVING_DIRECTIONS, DIR_UP, DIR_RIGHT, DIR_DOWN, DIR_LEFT, 
+    DIR_UP_RIGHT, DIR_RIGHT_DOWN, DIR_DOWN_LEFT, DIR_LEFT_UP } from "./vectors";
 
-const MAX_PATHFINDER_DEPTH = 100;
+const MAX_PATHFINDER_DEPTH = 10000;
+
+const STANDART_PRICE = 10;
+const DIAGONAL_PRICE = 10;
+const DIRECTION_PRICE = {
+    [DIR_UP]: STANDART_PRICE,
+    [DIR_RIGHT]: STANDART_PRICE,
+    [DIR_DOWN]: STANDART_PRICE,
+    [DIR_LEFT]: STANDART_PRICE,
+    [DIR_UP_RIGHT]: DIAGONAL_PRICE,
+    [DIR_RIGHT_DOWN]: DIAGONAL_PRICE,
+    [DIR_DOWN_LEFT]: DIAGONAL_PRICE,
+    [DIR_LEFT_UP]: DIAGONAL_PRICE,
+}
 
 function isLegitPointOnMap(map, position) {
     const { x, y } = position;
@@ -83,9 +98,10 @@ function pathfinderIteration(map, start, finish, model, spendedWay) {
     model[start.y][start.x].closed = true;
 
     for (let dir in MOVING_DIRECTIONS) {
+        const price = DIRECTION_PRICE[dir];
         const newPoint = summVectors(start, MOVING_DIRECTIONS[dir]);
         if (isLegitPointOnMap(map, newPoint) && isLegitPointOnModel(model, newPoint)) {
-            const cellInfo = getCellInfoOnModel(model, newPoint, finish, spendedWay + 1, start);
+            const cellInfo = getCellInfoOnModel(model, newPoint, finish, spendedWay + price, start);
             if (cellInfo !== model[newPoint.y][newPoint.x]) model[newPoint.y][newPoint.x] = cellInfo;
 
             if (cellInfo.remainingCost === 0) return model;
@@ -107,7 +123,7 @@ export function findPathOnMap(map) {
 
     const model = getInitPathfinderModel(map, startPos, finishPos);
 
-    const finishedModel = pathfinderIteration(map, startPos, finishPos, model, 1);
+    const finishedModel = pathfinderIteration(map, startPos, finishPos, model, 0);
 
     console.log(finishedModel);
 
